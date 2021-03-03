@@ -1,3 +1,5 @@
+using System;
+
 namespace DurableFunctionsCLI.Core.Discovery
 {
     public class TaskHubFinderFactory
@@ -5,6 +7,7 @@ namespace DurableFunctionsCLI.Core.Discovery
         private string subscriptionId;
         private string bearerToken;
         private string resourceGroupName;
+        private string storageAccountName;
 
         public TaskHubFinderFactory(string subscriptionId, string bearerToken)
         {
@@ -15,6 +18,15 @@ namespace DurableFunctionsCLI.Core.Discovery
         public TaskHubFinderFactory InResourceGroup(string resourceGroupName)
         {
             this.resourceGroupName = resourceGroupName;
+            return this;
+        }
+
+        public TaskHubFinderFactory InStorageAccount(string storageAccountName)
+        {
+            if (resourceGroupName == null)
+                throw new InvalidOperationException("Specify a resource group before specifying a specific storage account");
+
+            this.storageAccountName = storageAccountName;
             return this;
         }
 
@@ -30,7 +42,10 @@ namespace DurableFunctionsCLI.Core.Discovery
             if (resourceGroupName == null)
                 return new SubscriptionStorageAccountFinder(subscriptionId, bearerToken);
 
-            return new ResourceGroupStorageAccountFinder(subscriptionId, resourceGroupName, bearerToken);
+            if (storageAccountName == null)
+                return new ResourceGroupStorageAccountFinder(subscriptionId, resourceGroupName, bearerToken);
+
+            return new SpecificStorageAccountFinder(subscriptionId, resourceGroupName, storageAccountName, bearerToken);
         }
     }
 }

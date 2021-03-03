@@ -20,7 +20,7 @@ namespace DurableFunctionsCLI.Core.Discovery
 
         public abstract Task<IEnumerable<StorageAccount>> FindAllStorageAccountsAsync();
 
-        protected async Task<IEnumerable<StorageAccount>> GetStorageAccountsFromAzureAsync(string url)
+        protected virtual async Task<IEnumerable<StorageAccount>> GetStorageAccountsFromAzureAsync(string url)
         {
             using (var httpClient = new HttpClient())
             {
@@ -78,6 +78,37 @@ namespace DurableFunctionsCLI.Core.Discovery
         public override async Task<IEnumerable<StorageAccount>> FindAllStorageAccountsAsync()
         {
             return await base.GetStorageAccountsFromAzureAsync(formattedUrl);
+        }
+    }
+
+    internal class SpecificStorageAccountFinder : StorageAccountFinder
+    {
+        private static readonly string apiUrl = "https://management.azure.com/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.Storage/storageAccounts/{2}?api-version=2019-06-01";
+        private string resourceGroupName;
+        private string storageAccountName;
+        private string formattedUrl;
+
+        public SpecificStorageAccountFinder(string subscriptionId, string resourceGroupName, string storageAccountName,
+            string bearerToken) : base(subscriptionId, bearerToken)
+        {
+            this.resourceGroupName = resourceGroupName;
+            this.storageAccountName = storageAccountName;
+            FormatApiUrl();
+        }
+
+        private void FormatApiUrl()
+        {
+            formattedUrl = string.Format(apiUrl, subscriptionId, resourceGroupName, storageAccountName);
+        }
+
+        public override async Task<IEnumerable<StorageAccount>> FindAllStorageAccountsAsync()
+        {
+            using (var httpClient = new HttpClient())
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
+                var response = await httpClient.GetFromJsonAsync<StorageAccount>(formattedUrl);
+                return new List<StorageAccount>{ response };
+            }  
         }
     }
 }
