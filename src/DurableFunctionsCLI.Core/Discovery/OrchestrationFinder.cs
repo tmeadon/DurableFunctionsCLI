@@ -20,15 +20,15 @@ namespace DurableFunctionsCLI.Core.Discovery
 
         public async Task<IEnumerable<Orchestration>> GetOrchestrationsAsync(DateTime sinceDate)
         {
-            return await QueryInstanceTableAsync(o => o.CreatedTime > DateTime.UtcNow.AddHours(-2));
+            return await QueryInstanceTableAsync(o => o.CreatedTime > sinceDate);
         }
 
         public async Task<IEnumerable<Orchestration>> GetOrchestrationsAsync(DateTime start, DateTime end)
         {
             if (end < start)
                 throw new ArgumentException("End date should not be before the start date");
-                
-            return await QueryInstanceTableAsync(o => o.CreatedTime > DateTime.UtcNow.AddHours(-2));
+
+            return await QueryInstanceTableAsync(o => o.CreatedTime > start && o.CreatedTime < end);
         }
 
         private async Task<IEnumerable<Orchestration>> QueryInstanceTableAsync(Expression<Func<Orchestration,bool>> filter)
