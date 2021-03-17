@@ -1,4 +1,6 @@
+using Azure.Data.Tables;
 using DurableFunctionsCLI.Core.Models;
+using System;   
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -27,7 +29,7 @@ namespace DurableFunctionsCLI.Core.Discovery
         public async Task<IEnumerable<TaskHub>> DetectAsync(StorageAccount storageAccount)
         {
             var allTables = await GetStorageAccountTables(storageAccount);
-            return GetTaskHubsFromTableNames(allTables, storageAccount);
+            return await GetTaskHubsFromTableNamesAsync(allTables, storageAccount);
         }
 
         private async Task<IEnumerable<string>> GetStorageAccountTables(StorageAccount storageAccount)
@@ -61,11 +63,11 @@ namespace DurableFunctionsCLI.Core.Discovery
             public string Name { get; set; }
         }
 
-        private IEnumerable<TaskHub> GetTaskHubsFromTableNames(IEnumerable<string> allTableNames, StorageAccount storageAccount)
+        private async Task<IEnumerable<TaskHub>> GetTaskHubsFromTableNamesAsync(IEnumerable<string> allTableNames, StorageAccount storageAccount)
         {
             var potentialTaskHubNames = allTableNames.Where(n => n.EndsWith(instanceTableSuffix)).Select(n => n.Replace(instanceTableSuffix, string.Empty));
             var validTaskHubs = potentialTaskHubNames.Where(n => IsValidTaskHub(allTableNames, n));
-            return BuildTaskHubList(validTaskHubs, storageAccount);
+            return await BuildTaskHubListAsync(validTaskHubs, storageAccount);
         }
 
         private bool IsValidTaskHub(IEnumerable<string> allTableNames, string potentialTaskHubName)
@@ -75,18 +77,60 @@ namespace DurableFunctionsCLI.Core.Discovery
             return allTableNames.Contains(instanceTableName) && allTableNames.Contains(historyTableName);
         }
 
-        private IEnumerable<TaskHub> BuildTaskHubList(IEnumerable<string> validTaskHubs, StorageAccount storageAccount)
+        private async Task<IEnumerable<TaskHub>> BuildTaskHubListAsync(IEnumerable<string> validTaskHubs, StorageAccount storageAccount)
         {
+            var taskHubs = new List<TaskHub>();
+
             foreach (var taskHub in validTaskHubs)
             {
-                yield return new TaskHub
+                taskHubs.Add(new TaskHub
                 {
                     Name = taskHub,
                     StorageAccountName = storageAccount.Name,
-                    HistoryTableName = $"{taskHub}{historyTableSuffix}",
-                    InstancesTableName = $"{taskHub}{instanceTableSuffix}"
-                };
+                    HistoryTableClient = await BuildTableClientAsync(storageAccount, $"{taskHub}{historyTableSuffix}"),
+                    InstancesTableClient = await BuildTableClientAsync(storageAccount, $"{taskHub}{instanceTableSuffix}")
+                });
             }
+            
+            return taskHubs;
+        }
+
+        private async Task<TableClient> BuildTableClientAsync(StorageAccount storageAccount, string tableName)
+        {
+            var key = await GetStorageAccountKeyAsync(storageAccount);
+            return new TableClient(
+                new Uri(storageAccount.Properties.PrimaryEndpoints["table"]),
+                tableName,
+                new TableSharedKeyCredential(storageAccount.Name, key)
+            );
+        }
+
+        private async Task<string> GetStorageAccountKeyAsync(StorageAccount storageAccount)
+        {
+            using (var httpClient = new HttpClient())
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
+                var url = GetStorageAccountListKeysUri(storageAccount);
+                var response = await httpClient.PostAsync(url, new StringContent(String.Empty));
+                var res = await response.Content.ReadAsStringAsync();
+                var keys = await response.Content.ReadFromJsonAsync<StorageAccountKeyApiResponse>();
+                return keys.Keys.First().Value;
+            }
+        }
+
+        private string GetStorageAccountListKeysUri(StorageAccount storageAccount)
+        {
+            return $"https://management.azure.com{storageAccount.Id}/listKeys?api-version=2021-01-01";
+        }
+
+        private class StorageAccountKeyApiResponse
+        {
+            public List<StorageAccountKey> Keys { get; set; }
+        }
+
+        private class StorageAccountKey
+        {
+            public string Value { get; set; }
         }
     }
 }
