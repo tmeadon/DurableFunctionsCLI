@@ -7,7 +7,7 @@ RootModule = 'PSDurableFunctions'
 ModuleVersion = '0.1.0'
 
 # Supported PSEditions
-# CompatiblePSEditions = @()
+CompatiblePSEditions = @('Core')
 
 # ID used to uniquely identify this module
 GUID = 'd5206f27-9ba0-463d-941e-dd3270a628ef'
@@ -22,10 +22,10 @@ CompanyName = 'tommagumma'
 Copyright = '(c) tommagumma. All rights reserved.'
 
 # Description of the functionality provided by this module
-# Description = ''
+Description = 'This module enables monitoring and management of Azure Durable Functions'
 
 # Minimum version of the PowerShell engine required by this module
-# PowerShellVersion = ''
+PowerShellVersion = '7'
 
 # Name of the PowerShell host required by this module
 # PowerShellHostName = ''
@@ -63,7 +63,10 @@ RequiredModules = @(
 NestedModules = @('bin\DurableFunctionsCLI.Core.dll')
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = '*'
+FunctionsToExport = @(
+    'Get-DFOrchestration'
+    'Get-DFTaskHubs'
+)
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = '*'
@@ -95,7 +98,7 @@ PrivateData = @{
         # LicenseUri = ''
 
         # A URL to the main website for this project.
-        # ProjectUri = ''
+        ProjectUri = 'https://github.com/tommagumma/DurableFunctionsCLI'
 
         # A URL to an icon representing this module.
         # IconUri = ''
