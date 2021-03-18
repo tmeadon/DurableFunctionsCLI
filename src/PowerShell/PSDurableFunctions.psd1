@@ -4,7 +4,7 @@
 RootModule = 'PSDurableFunctions'
 
 # Version number of this module.
-ModuleVersion = '0.0.1'
+ModuleVersion = '0.1.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -16,7 +16,7 @@ GUID = 'd5206f27-9ba0-463d-941e-dd3270a628ef'
 Author = 'tommagumma'
 
 # Company or vendor of this module
-CompanyName = 'Unknown'
+CompanyName = 'tommagumma'
 
 # Copyright statement for this module
 Copyright = '(c) tommagumma. All rights reserved.'
@@ -43,7 +43,9 @@ Copyright = '(c) tommagumma. All rights reserved.'
 # ProcessorArchitecture = ''
 
 # Modules that must be imported into the global environment prior to importing this module
-# RequiredModules = @()
+RequiredModules = @(
+    @{ModuleName = "Az.Accounts"; ModuleVersion = "2.2.1"}
+)
 
 # Assemblies that must be loaded prior to importing this module
 # RequiredAssemblies = @()
@@ -58,7 +60,7 @@ Copyright = '(c) tommagumma. All rights reserved.'
 # FormatsToProcess = @()
 
 # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
-# NestedModules = @()
+NestedModules = @('bin\DurableFunctionsCLI.Core.dll')
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
 FunctionsToExport = '*'
