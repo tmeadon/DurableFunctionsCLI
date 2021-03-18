@@ -18,36 +18,49 @@ namespace DurableFunctionsCLI.Core.Discovery
             this.taskHub = taskHub;
         }
 
-        public async Task<IEnumerable<Orchestration>> GetOrchestrationsAsync(DateTime sinceDate)
+        public IEnumerable<Orchestration> GetOrchestrations(DateTime sinceDate)
         {
-            return await QueryInstanceTableAsync(o => o.CreatedTime > sinceDate);
+            return QueryInstanceTable(o => o.CreatedTime > sinceDate);
         }
 
-        public async Task<IEnumerable<Orchestration>> GetOrchestrationsAsync(DateTime start, DateTime end)
+        public IEnumerable<Orchestration> GetOrchestrations(DateTime start, DateTime end)
         {
             if (end < start)
                 throw new ArgumentException("End date should not be before the start date");
 
-            return await QueryInstanceTableAsync(o => o.CreatedTime > start && o.CreatedTime < end);
+            return QueryInstanceTable(o => o.CreatedTime > start && o.CreatedTime < end);
         }
 
-        private async Task<IEnumerable<Orchestration>> QueryInstanceTableAsync(Expression<Func<Orchestration,bool>> filter)
+        private IEnumerable<Orchestration> QueryInstanceTable(Expression<Func<OrchestrationTableEntity,bool>> filter)
         {
-            AsyncPageable<Orchestration> result = taskHub.InstancesTableClient.QueryAsync<Orchestration>(filter);
-            var orchestrations = await BuildOrchestrationList(result);
+            Pageable<OrchestrationTableEntity> result = taskHub.InstancesTableClient.Query<OrchestrationTableEntity>(filter);
+            var orchestrations = BuildOrchestrationList(result);
             return orchestrations;
         }
 
-        private async Task<IEnumerable<Orchestration>> BuildOrchestrationList(AsyncPageable<Orchestration> orchestrationsPageable)
+        private IEnumerable<Orchestration> BuildOrchestrationList(Pageable<OrchestrationTableEntity> tableEntities)
         {
             List<Orchestration> orchestrations = new List<Orchestration>();
             
-            await foreach (var orchestration in orchestrationsPageable)
+            foreach (var orchestration in tableEntities)
             {
-                orchestrations.Add(orchestration);
+                orchestrations.Add(ConvertToOrchestrationBase(orchestration));
             }
 
             return orchestrations;
+        }
+
+        private Orchestration ConvertToOrchestrationBase(OrchestrationTableEntity tableEntity)
+        {
+            var output = new Orchestration();
+            
+            foreach (var prop in output.GetType().GetProperties().ToList())
+            {
+                var value = tableEntity.GetType().GetProperty(prop.Name).GetValue(tableEntity, null);
+                prop.SetValue(output, value, null);
+            }
+
+            return output;
         }
     }
 }
