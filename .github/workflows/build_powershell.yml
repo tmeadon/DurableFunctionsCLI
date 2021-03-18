@@ -29,3 +29,12 @@ jobs:
       with:
         name: PSDurableFunctions
         path: src/PowerShell
+
+    - name: publish to psgallery
+      shell: pwsh
+      env:
+        PSGALLERY_KEY: ${{ secrets.PSGALLERY_KEY }}
+      run: |
+        Rename-Item -Path "src/PowerShell" -NewName "PSDurableFunctions"
+        Publish-Module -Repository 'PSGallery' -Path 'src/PSDurableFunctions' -NuGetApiKey $env:PSGALLERY_KEY
+      if: github.ref == 'refs/heads/main'
