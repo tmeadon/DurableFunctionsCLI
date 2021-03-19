@@ -21,7 +21,7 @@ namespace DurableFunctionsCLI.Core.Discovery
         {
             var allEvents = QueryAllOrchestrationEvents();
             var collapsedEvents = CollapseEventList(allEvents);
-            return collapsedEvents;
+            return collapsedEvents.ToList();
         }
 
         private IEnumerable<OrchestrationEvent> QueryAllOrchestrationEvents()
