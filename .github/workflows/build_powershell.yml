@@ -7,7 +7,7 @@ jobs:
 
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - name: git checkout
@@ -19,22 +19,22 @@ jobs:
         dotnet-version: 5.0.x
 
     - name: dotnet restore
-      run: dotnet restore src/DurableFunctionsCLI.Core/DurableFunctionsCLI.Core.csproj
+      run: dotnet restore .\src\DurableFunctionsCLI.Core\DurableFunctionsCLI.Core.csproj
 
     - name: dotnet publish
-      run: dotnet publish -o src/PowerShell/bin src/DurableFunctionsCLI.Core/DurableFunctionsCLI.Core.csproj
+      run: dotnet publish -o .\src\PowerShell\bin src\DurableFunctionsCLI.Core\DurableFunctionsCLI.Core.csproj
 
     - name: upload artifact
       uses: actions/upload-artifact@v2
       with:
         name: PSDurableFunctions
-        path: src/PowerShell
+        path: .\src\PowerShell
 
     - name: publish to psgallery
       shell: pwsh
       env:
         PSGALLERY_KEY: ${{ secrets.PSGALLERY_KEY }}
       run: |
-        Rename-Item -Path "src/PowerShell" -NewName "PSDurableFunctions"
-        Publish-Module -Repository 'PSGallery' -Path 'src/PSDurableFunctions' -NuGetApiKey $env:PSGALLERY_KEY
+        Rename-Item -Path ".\src\PowerShell" -NewName "PSDurableFunctions"
+        Publish-Module -Repository 'PSGallery' -Path '.\src\PSDurableFunctions' -NuGetApiKey $env:PSGALLERY_KEY -Force
       if: github.ref == 'refs/heads/main'
