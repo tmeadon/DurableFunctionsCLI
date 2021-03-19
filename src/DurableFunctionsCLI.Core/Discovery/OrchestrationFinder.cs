@@ -1,5 +1,6 @@
 using Azure;
 using Azure.Data.Tables;
+using DurableFunctionsCLI.Core.Helpers;
 using DurableFunctionsCLI.Core.Models;
 using System;
 using System.Collections.Generic;
@@ -44,23 +45,10 @@ namespace DurableFunctionsCLI.Core.Discovery
             
             foreach (var orchestration in tableEntities)
             {
-                orchestrations.Add(ConvertToOrchestrationBase(orchestration));
+                orchestrations.Add(TableEntityConverter.ConvertToBaseType<Orchestration>(orchestration));
             }
 
             return orchestrations;
-        }
-
-        private Orchestration ConvertToOrchestrationBase(OrchestrationTableEntity tableEntity)
-        {
-            var output = new Orchestration();
-            
-            foreach (var prop in output.GetType().GetProperties().ToList())
-            {
-                var value = tableEntity.GetType().GetProperty(prop.Name).GetValue(tableEntity, null);
-                prop.SetValue(output, value, null);
-            }
-
-            return output;
         }
     }
 }
