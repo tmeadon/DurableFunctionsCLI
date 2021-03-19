@@ -28,7 +28,8 @@ function Get-DFOrchestration
 
         foreach ($orch in $orchestrations)
         {
-            Add-OrchestrationObjectMembers -Orchestration $orch
+            Add-JsonDeserialisedMember -InputObject $Orch -MemberName 'Input'
+            Add-JsonDeserialisedMember -InputObject $Orch -MemberName 'Output'
         }
 
         $orchestrations
