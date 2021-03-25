@@ -1,4 +1,6 @@
+using DurableFunctionsCLI.Core.Exceptions;
 using DurableFunctionsCLI.Core.Models;
+using System;   
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -22,12 +24,31 @@ namespace DurableFunctionsCLI.Core.Discovery
 
         protected virtual async Task<IEnumerable<StorageAccount>> GetStorageAccountsFromAzureAsync(string url)
         {
+            try
+            {
+                return await InvokeWebRequestAsync(url);
+            }
+            catch (Exception ex)
+            {
+                HandleGetStorageAccountExceptions(ex);
+                throw;
+            }
+        }
+
+        private async Task<IEnumerable<StorageAccount>> InvokeWebRequestAsync(string url)
+        {
             using (var httpClient = new HttpClient())
             {
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
                 var response = await httpClient.GetFromJsonAsync<StorageAccountApiResponse>(url);
                 return response.Value;
-            }  
+            }
+        }
+
+        private void HandleGetStorageAccountExceptions(Exception ex)
+        {
+            if (ex.Message.Contains("404"))
+                throw new StorageAccountNotFoundException();
         }
 
         protected class StorageAccountApiResponse
