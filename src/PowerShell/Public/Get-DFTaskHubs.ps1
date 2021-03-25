@@ -25,8 +25,8 @@ function Get-DFTaskHubs
 
         # build a task hub finder instance
         $taskHubFinderParams = @{
-            SubscriptionId = $subscriptionId
-            Token = $token
+            SubscriptionId    = $subscriptionId
+            Token             = $token
             ResourceGroupName = $ResourceGroupName
         }
         if ($StorageAccountName) { $taskHubFinderParams['StorageAccountName'] = $StorageAccountName }
