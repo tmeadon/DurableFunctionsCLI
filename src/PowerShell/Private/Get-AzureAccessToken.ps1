@@ -7,7 +7,7 @@ function Get-AzureAccessToken
     
     process
     {
-        (Get-AzAccessToken).Token
+        (Get-AzAccessToken -ErrorAction Stop).Token
     }
     
     end {}
