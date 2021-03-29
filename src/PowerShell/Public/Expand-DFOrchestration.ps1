@@ -9,7 +9,7 @@ function Expand-DFOrchestration
         $TaskHub,
 
         # Execution ID for the orchestration
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [string]
         $ExecutionId
     )
