@@ -49,6 +49,9 @@ namespace DurableFunctionsCLI.Core.Discovery
         {
             if (ex.Message.Contains("404"))
                 throw new StorageAccountNotFoundException();
+
+            if (ex.Message.Contains("429"))
+                throw new StorageApiThrottledException();
         }
 
         protected class StorageAccountApiResponse
