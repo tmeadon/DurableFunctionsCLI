@@ -22,7 +22,7 @@ function Add-JsonDeserialisedMember
 
         $newMemberName = $MemberName + "Object"
 
-        if (Test-Json -Json $InputObject.$MemberName -ErrorAction SilentlyContinue)
+        if (($null -ne $InputObject.$MemberName) -and (Test-Json -Json $InputObject.$MemberName -ErrorAction SilentlyContinue))
         {
             $newMemberValue = $InputObject.$MemberName | ConvertFrom-Json
         }
