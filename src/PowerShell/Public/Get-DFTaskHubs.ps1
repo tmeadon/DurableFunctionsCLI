@@ -33,7 +33,18 @@ function Get-DFTaskHubs
         $taskHubFinder = Build-TaskHubFinder @taskHubFinderParams
 
         # find all task hubs
-        Find-TaskHubs -TaskHubFinder $taskHubFinder
+        try
+        {
+            Find-TaskHubs -TaskHubFinder $taskHubFinder
+        }
+        catch
+        {
+            if ($_.Exception -is [DurableFunctionsCLI.Core.Exceptions.StorageAccountNotFoundException])
+            {
+                throw "Could not retrieve storage account(s), please check $ResourceGroupName is a valid resource group in subscription $subscriptionId"
+            }
+        }
+        
     }
     
     end {}
