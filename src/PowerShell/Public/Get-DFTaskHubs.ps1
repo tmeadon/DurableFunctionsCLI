@@ -39,14 +39,16 @@ function Get-DFTaskHubs
         }
         catch
         {
-            if ($_.Exception -is [DurableFunctionsCLI.Core.Exceptions.StorageAccountNotFoundException])
+            if ($_.Exception.InnerException.InnerException -is [DurableFunctionsCLI.Core.Exceptions.StorageAccountNotFoundException])
             {
-                throw "Could not retrieve storage account(s), please check $ResourceGroupName is a valid resource group in subscription $subscriptionId"
+                throw "Could not retrieve storage account(s), please check $ResourceGroupName is a valid resource group in subscription $subscriptionId."
             }
-            if ($_.Exception -is [DurableFunctionsCLI.Core.Exceptions.StorageApiThrottledException])
+            if ($_.Exception.InnerException.InnerException -is [DurableFunctionsCLI.Core.Exceptions.StorageApiThrottledException])
             {
-                throw "Could not retrieve storage account(s) because API requests are being throttled.  Please try again later or try adding the -StorageAccountName parameter"
+                throw "Could not retrieve storage account(s) because storage API requests are being throttled.  Please try again later or try adding the -StorageAccountName parameter for cheaper requests."
             }
+
+            throw "Unknown error occurred retrieving task hubs: $($_.Exception)"
         }
     }
     
