@@ -34,8 +34,10 @@ jobs:
       shell: pwsh
       env:
         PSGALLERY_KEY: ${{ secrets.PSGALLERY_KEY }}
+        GITHUB_REF: ${{ github.ref }}
       run: |
         Install-Module -Name 'Az.Accounts' -MinimumVersion "2.2.1" -Force
         Rename-Item -Path "src/PowerShell" -NewName "PSDurableFunctions"
+        Update-ModuleManifest -Path 'src/PSDurableFunctions/PSDurableFunctions.psd1' -ModuleVersion ($env:GITHUB_REF).replace("refs/tags/v","")
         Publish-Module -Repository 'PSGallery' -Path 'src/PSDurableFunctions' -NuGetApiKey $env:PSGALLERY_KEY
       if: startsWith(github.ref, 'refs/tags/v')
