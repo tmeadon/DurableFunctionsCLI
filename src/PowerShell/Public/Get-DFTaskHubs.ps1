@@ -22,6 +22,9 @@ function Get-DFTaskHubs
     {
         $token = Get-AzureAccessToken
         $subscriptionId = Get-ConnectedSubscriptionId
+        $rgExists = Test-ResourceGroupExists -ResourceGroupName $ResourceGroupName
+
+        if (-not $rgExists) { throw "Resource Group $ResourceGroupName can not be found in subscription $subscriptionId" }
 
         # build a task hub finder instance
         $taskHubFinderParams = @{
