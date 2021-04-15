@@ -44,7 +44,8 @@ PowerShellVersion = '7.1'
 
 # Modules that must be imported into the global environment prior to importing this module
 RequiredModules = @(
-    @{ModuleName = "Az.Accounts"; ModuleVersion = "2.2.1"}
+    @{ModuleName = "Az.Accounts"; ModuleVersion = "2.2.1"},
+    @{ModuleName = "Az.Resources"; ModuleVersion = "2.1.0"}
 )
 
 # Assemblies that must be loaded prior to importing this module
