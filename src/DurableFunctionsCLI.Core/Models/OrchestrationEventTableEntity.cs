@@ -8,7 +8,7 @@ namespace DurableFunctionsCLI.Core.Models
     {
         public string PartitionKey { get; set; }
         public string RowKey { get; set; }
-        public DateTimeOffset? Timestamp { get; set; }
+        public override DateTimeOffset? Timestamp { get; set; }
         public ETag ETag { get; set; }
     }
 }
