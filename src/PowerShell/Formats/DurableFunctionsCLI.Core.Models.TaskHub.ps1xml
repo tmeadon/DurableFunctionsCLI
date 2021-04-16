@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-16"?>
+<Configuration>
+	<ViewDefinitions>
+		<View>
+			<Name>DurableFunctionsCLI.Core.Models.TaskHub</Name>
+			<ViewSelectedBy>
+				<TypeName>DurableFunctionsCLI.Core.Models.TaskHub</TypeName>
+			</ViewSelectedBy>
+			<TableControl>
+				<TableHeaders>
+					<TableColumnHeader>
+						<Label>Name</Label>
+					</TableColumnHeader>
+					<TableColumnHeader>
+						<Label>StorageAccountName</Label>
+					</TableColumnHeader>
+				</TableHeaders>
+				<TableRowEntries>
+					<TableRowEntry>
+						<TableColumnItems>
+							<TableColumnItem>
+								<PropertyName>Name</PropertyName>
+							</TableColumnItem>
+							<TableColumnItem>
+								<PropertyName>StorageAccountName</PropertyName>
+							</TableColumnItem>
+						</TableColumnItems>
+					</TableRowEntry>
+				</TableRowEntries>
+            </TableControl>
+		</View>
+	</ViewDefinitions>
+</Configuration>

@@ -58,7 +58,11 @@ RequiredModules = @(
 # TypesToProcess = @()
 
 # Format files (.ps1xml) to be loaded when importing this module
-# FormatsToProcess = @()
+FormatsToProcess = @(
+    'Formats\DurableFunctionsCLI.Core.Models.TaskHub.ps1xml',
+    'Formats\DurableFunctionsCLI.Core.Models.Orchestration.ps1xml',
+    'Formats\DurableFunctionsCLI.Core.Models.OrchestrationEvent.ps1xml'
+)
 
 # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
 NestedModules = @('bin\DurableFunctionsCLI.Core.dll')

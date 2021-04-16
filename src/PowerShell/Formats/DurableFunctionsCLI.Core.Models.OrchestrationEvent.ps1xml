@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-16"?>
+<Configuration>
+	<ViewDefinitions>
+		<View>
+			<Name>DurableFunctionsCLI.Core.Models.OrchestrationEvent</Name>
+			<ViewSelectedBy>
+				<TypeName>DurableFunctionsCLI.Core.Models.OrchestrationEvent</TypeName>
+			</ViewSelectedBy>
+			<TableControl>
+				<TableHeaders>
+					<TableColumnHeader>
+						<Label>Name</Label>
+					</TableColumnHeader>
+					<TableColumnHeader>
+						<Label>Timestamp</Label>
+					</TableColumnHeader>
+					<TableColumnHeader>
+						<Label>Result</Label>
+					</TableColumnHeader>
+				</TableHeaders>
+				<TableRowEntries>
+					<TableRowEntry>
+						<TableColumnItems>
+							<TableColumnItem>
+								<PropertyName>Name</PropertyName>
+							</TableColumnItem>
+							<TableColumnItem>
+								<PropertyName>_Timestamp</PropertyName>
+							</TableColumnItem>
+							<TableColumnItem>
+								<PropertyName>Result</PropertyName>
+							</TableColumnItem>
+						</TableColumnItems>
+					</TableRowEntry>
+				</TableRowEntries>
+            </TableControl>
+		</View>
+	</ViewDefinitions>
+</Configuration>
