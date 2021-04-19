@@ -1,6 +1,7 @@
 using DurableFunctionsCLI.Core.Models;
 using System;
 using System.Linq;
+using System.Reflection;
 
 namespace DurableFunctionsCLI.Core.Helpers
 {
